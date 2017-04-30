@@ -7,23 +7,8 @@ from scene import Scene, DrivingScene, Foyer, Library, MasterBedroom
 import time
 #BE SURE TO GET THE CLOCK
 clock = pygame.time.Clock()
-
-screen_size = (1200, 750)
-screen = pygame.display.set_mode(screen_size)
-white = (255,255,255)
-black = (0,0,0)
-
-
-###### TEXT GENERATOR ######################
-def text_generator(string, pos):
-        text = ''
-        for i in range(len(string)):
-            text += string[i]
-            font = pygame.font.SysFont("Consolas", 40)
-            message_display_text = font.render(text,True, (255,255,255))
-            screen.blit(message_display_text, pos)
-            pygame.display.flip()
-            clock.tick(30)
+from mhScript import driving_script
+from DisplayScript import A_textbox
 
 
 
@@ -42,15 +27,16 @@ def run_game():
     foyer = Foyer(screen, text_box)
     library = Library(screen, text_box)
     bedroom = MasterBedroom(screen, text_box)
+    ##### NEW CLASS FOR DISPLAY TEXTBOX ########
+    Text3 = A_textbox(screen)
     pygame.mixer.init()
     pygame.mixer.music.load('./music/old city theme.ogg')
     pygame.mixer.music.play(-1)
     entry = TextBox(rect=(680, 700, 200, 30))
 
-
 # driving/foyer/etc text1 set true to display only once in its lifetime in the main loop iterations
     drivingtext1 = True
-    foyertext1 = True
+    # foyertext1 = True
 
 
     while 1:
@@ -65,14 +51,9 @@ def run_game():
             # input_box(entry)
             # friend_name = driving.get_user_input(entry)
 
-
-######## DISPLAY TEXT FOR DRIVING SCENE####### will put in list later to it better/more efficient
+ ######## DISPLAY TEXT FOR DRIVING SCENE#######
             if drivingtext1:
-                text_generator("You're driving with your best friend, heading home after a day of hiking.", (100,460))
-                text_generator("Rain is beating hard on the roof of your car, the wipers swishing fast.", (100,490))
-                text_generator("Your GPS takes you to some backroads, empty of light and other cars.", (100,520))
-                text_generator("Suddenly, you and your friend jolt in your seats! You've hit something!", (100, 550))
-
+                Text3.text_generator(driving_script[0:4])
                 # tells main loop to stop entering drivingtext1
                 drivingtext1 = False
 
@@ -80,43 +61,38 @@ def run_game():
                 driving.enter()
 
                 drivingtext2 = True
-
                 pygame.time.delay(1000)
-
-                text_generator("What do you do? Enter a number:", (100,460))
-                text_generator("1. Get out of the car and check it out.", (100,490))
-                text_generator("2. Stay in the car.", (100,520))
-                text_generator("3. Quit Game. This is too scary.", (100, 550))
-
+                ###calling the text generator function with script####
+                Text3.text_generator(driving_script[4:8])
                 #this delays the text on the screen so reader can read it
-                pygame.time.delay(2000)
+                pygame.time.delay(3000)
                 pygame.time.wait(2)
 
             # pygame.time.wait(2)
         if driving.check_scene():
             foyer.enter()
 
-            if foyertext1:
-                text_generator("You enter the house with your friend and ring the bell. No answer.", (100,460))
-                text_generator("Your friend shrugs and pushes the door. You both enter and see three", (100,490))
-                text_generator("people standing in the foyer: an elderly man, a woman in a red dress and heels,", (100,520))
-                text_generator("and a teenage boy in goth makeup.", (100, 550))
-                #tells main loop to stop entering foyertext1
-                foyertext1 = False
+            # if foyertext1:
+            #     text_generator("You enter the house with your friend and ring the bell. No answer.", (100,460))
+            #     text_generator("Your friend shrugs and pushes the door. You both enter and see three", (100,490))
+            #     text_generator("people standing in the foyer: an elderly man, a woman in a red dress and heels,", (100,520))
+            #     text_generator("and a teenage boy in goth makeup.", (100, 550))
+            #     #tells main loop to stop entering foyertext1
+            #     foyertext1 = False
+            #
+            #     #call function again to draw over foyertext1
+            #     foyer.enter()
+            #
+            #     foyertext2 = True
+            #
+            #     pygame.time.delay(1000)
+            #
+            #     text_generator("What do you do? Enter a number:", (100,460))
+            #     text_generator("1. Talk to the elderly man", (100,490))
+            #     text_generator("2. Talk to the beautiful woman.", (100,520))
+            #     text_generator("3. Talk to the gothic teenager.", (100, 550))
 
-                #call function again to draw over foyertext1
-                foyer.enter()
-
-                foyertext2 = True
-
-                pygame.time.delay(1000)
-
-                text_generator("What do you do? Enter a number:", (100,460))
-                text_generator("1. Talk to the elderly man", (100,490))
-                text_generator("2. Talk to the beautiful woman.", (100,520))
-                text_generator("3. Talk to the gothic teenager.", (100, 550))
-
-                pygame.time.delay(2000)
+            # pygame.time.delay(2000)
         if foyer.check_scene():
             library.enter()
 
