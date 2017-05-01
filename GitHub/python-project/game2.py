@@ -53,7 +53,8 @@ def run_game():
 
  ######## DISPLAY TEXT FOR DRIVING SCENE#######
             if drivingtext1:
-                Text3.text_generator(driving_script[0:4])
+                show_text = A_textbox(screen)
+                show_text.text_generator(driving_script[0:4])
                 # tells main loop to stop entering drivingtext1
                 drivingtext1 = False
 

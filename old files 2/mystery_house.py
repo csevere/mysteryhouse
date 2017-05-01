@@ -6,20 +6,29 @@ import sys
 from experiement import Scene, DrivingScene, Foyer
 clock = pygame.time.Clock()
 import time
+from mhScript import driving_script, foyer_script
 
 screen_size = (1200, 750)
 screen = pygame.display.set_mode(screen_size)
 
 ###### TEXT GENERATOR ######################
-def text_generator(string, pos):
-        text = ''
-        for i in range(len(string)):
-            text += string[i]
-            font = pygame.font.SysFont("Consolas", 40)
-            message_display_text = font.render(text,True, (255,255,255))
-            screen.blit(message_display_text, pos)
-            pygame.display.flip()
-            clock.tick(30)
+# def text_generator(string, pos):
+#         text = ''
+#         for i in range(len(string)):
+#             text += string[i]
+#             font = pygame.font.SysFont("Consolas", 40)
+#             message_display_text = font.render(text,True, (255,255,255))
+#             screen.blit(message_display_text, pos)
+#             pygame.display.flip()
+#             clock.tick(30)
+
+
+#
+# def RenderText(Text, Font, Target, X, Y, R, G, B): # The target is your screen
+#     """"Text , font, target surface, X, Y,
+#     and color (RGB)"""
+#     RenderedText = Font.render(Text, True, (R, G, B))
+#     Target.blit(RenderedText, (X, Y))
 
 
 # import classes
@@ -33,6 +42,8 @@ def run_game():
     intro = Scene(screen)
     driving = DrivingScene(screen)
     foyer = Foyer(screen)
+    Text3 = A_textbox(screen)
+
     # drivingtext1 set true to display only once in its lifetime in main loop iterations
     drivingtext1 = True
     # drivingtext3 = True
@@ -41,6 +52,8 @@ def run_game():
     # drivingtext2 = False
 
 
+    Text3.addRect()
+    Text3.text_generator("Hello")
     # settings = {
     # "text": input_questions["driving_scece1"],
     # "inactive_on_enter": False,
@@ -59,10 +72,14 @@ def run_game():
 
 
             if drivingtext1:
-                text_generator("You're driving with your best friend, heading home after a day of hiking.", (100,460))
-                text_generator("Rain is beating hard on the roof of your car, the wipers swishing fast.", (100,490))
-                text_generator("Your GPS takes you to some backroads, empty of light and other cars.", (100,520))
-                text_generator("Suddenly, you and your friend jolt in your seats! You've hit something!", (100, 550))
+                Text3.addRect()
+                Text3.text_generator("driving_script[0:3]")
+
+
+                # text_generator("You're driving with your best friend, heading home after a day of hiking.", (100,460))
+                # text_generator("Rain is beating hard on the roof of your car, the wipers swishing fast.", (100,490))
+                # text_generator("Your GPS takes you to some backroads, empty of light and other cars.", (100,520))
+                # text_generator("Suddenly, you and your friend jolt in your seats! You've hit something!", (100, 550))
                 # tells main loop to stop entering drivingtext1
                 drivingtext1 = False
 
@@ -72,11 +89,14 @@ def run_game():
                 drivingtext2 = True
 
                 pygame.time.delay(1000)
+                Text3.addRect()
+                Text3.text_generator("driving_script[4:7]")
 
-                text_generator("What do you do? Enter a number:", (100,460))
-                text_generator("1. Get out of the car and check it out.", (100,490))
-                text_generator("2. Stay in the car.", (100,520))
-                text_generator("3. Quit Game. This is too scary.", (100, 550))
+
+                # text_generator("What do you do? Enter a number:", (100,460))
+                # text_generator("1. Get out of the car and check it out.", (100,490))
+                # text_generator("2. Stay in the car.", (100,520))
+                # text_generator("3. Quit Game. This is too scary.", (100, 550))
 
                 pygame.time.delay(2000)
 

@@ -6,15 +6,54 @@ clock = pygame.time.Clock()
 white = (255,255,255)
 black = (0,0,0)
 
+# def drawText(surface, text, color, rect, font, aa=False, bkg=None):
+#     rect = Rect(rect)
+#     y = rect.top
+#     lineSpacing = -2
+#
+#     # get the height of the font
+#     fontHeight = font.size("Tg")[1]
+#
+#     while text:
+#         i = 1
+#
+#         # determine if the row of text will be outside our area
+#         if y + fontHeight < rect.bottom:
+#             break
+#
+#         # determine maximum width of line
+#         while font.size(text[:i])[0] < rect.width and i < len(text):
+#             i += 1
+#
+#         # if we've wrapped the text, then adjust the wrap to the last word
+#         if i < len(text):
+#             i = text.rfind(" ", 0, i) + 1
+#
+#         # render the line and blit it to the surface
+#         if bkg:
+#             image = font.render(text[:i], 1, color, bkg)
+#             image.set_colorkey(bkg)
+#         else:
+#             image = font.render(text[:i], aa, color)
+#
+#         surface.blit(image, (rect.left, y))
+#         y += fontHeight + lineSpacing
+#
+#         # remove the text we just blitted
+#         text = text[i:]
+#
+#     return text
+
+
 
 class A_textbox(object):
     def __init__(self, screen):
         pygame.init()
         self.screen = screen
 
-    # def addRect(self):
-    #     self.rect = pygame.draw.rect(self.screen, (black), (175, 75, 200, 100), 2)
-    #     pygame.display.update()
+
+
+
 
     #OLD version
     # def text_generator(self, string):
@@ -34,9 +73,9 @@ class A_textbox(object):
         for string in l_ist:
             for character in string:
                 text += character
-                font = pygame.font.SysFont("Consolas", 40)
+                font = pygame.font.SysFont("Lucida Sans", 30)
                 message_display_text = font.render(text,True, (255,255,255))
-                self.screen.blit(message_display_text, (50,460 + new_line))
+                self.screen.blit(message_display_text, (250,660 + new_line))
                 pygame.display.flip()
                 clock.tick(30)
                 text

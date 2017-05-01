@@ -1,4 +1,7 @@
 import pygame
+from puzzles import Bedroom_Puzzle, Library_puzzle, Kitchen_Puzzle
+
+clock = pygame.time.Clock()
 
 
 button_list = {'start': ['./images/start_button_hover.png', './images/start_button.png'],
@@ -6,16 +9,40 @@ button_list = {'start': ['./images/start_button_hover.png', './images/start_butt
         'instruction': ['./images/Instructions_button_hover.png', './images/Instructions_button.png'],
         'woman': ['./images/beautiful_woman_hover.png', './images/beautiful_woman.png'],
         'man': ['./images/elderly_man_hover.png', './images/elderly_man.png'],
-        'teen': ['./images/goth_teen_hover.png', './images/goth_teen.png']
+        'teen': ['./images/goth_teen_hover.png', './images/goth_teen.png'],
+        'note1': ['./images/note1.png', './images/note1.png'],
+        'note2': ['./images/note2.png', './images/note2.png'],
+        'watch': ['./images/watch.png', './images/watch.png'],
+        'skyline': ['./images/skyline1.png', './images/skyline1.png'],
+        'locket': ['./images/locket1.png', './images/locket1.png'],
+        'phone': ['./images/phone1.png', './images/phone1.png']
         }
-action = ['next', 'quit', 'instruction']
+
+action = ['next', 'quit', 'instruction', 'library', 'bedroom', 'kitchen', 'final', 'watch', 'picture']
+
+moving_scene = {
+    'library': False,
+    'bedroom': False,
+    'kitchen': False,
+    'final': False,
+}
+
+master_list = ['note1', 'note2', 'watch', 'picture', 'phone', 'locket']
+player_list = []
+
+def compare_list(player_list, master_list):
+    if player_list == master_list:
+        return True
+    else:
+        return False
 
 
 class Scene(object):
-    def __init__(self, screen, scene_on=False):
+    def __init__(self, screen, scene_on=False, puzzle_active=False):
         self.screen = screen
         self.bg = pygame.image.load("images/house.jpg")
         self.scene_on = scene_on
+        self.puzzle_active = puzzle_active
 
     def enter(self):
         # while not self.status:
@@ -23,6 +50,9 @@ class Scene(object):
         self.create_button("start", 528, 520, action[0])
         self.create_button("quit", 528, 600, action[1])
             # self.screen.blit(text_box, (240, 600))
+
+    def change_scene_finished(self):
+        self.scene_on = False
 
     def check_scene(self):
         return self.scene_on
@@ -38,14 +68,39 @@ class Scene(object):
             if click[0] == 1 and action != None:
                 if action == "next":
                     self.scene_on = True
-                elif action == "instruction":
-                    pass
-                    # need the display function here to show instruction script
                 elif action == "quit":
                     pygame.quit()
                     quit()
+                if action == "library":
+                    moving_scene['library'] = True
+                elif action == "bedroom":
+                    moving_scene['bedroom'] = True
+                elif action == "kitchen":
+                    moving_scene['kitchen'] = True
+                elif action == "final":
+                    moving_scene['final'] = True
+                elif action == 'note1':
+                    puzzle = Library_puzzle()
+                    puzzle.puzzle1(None)
+                elif action == 'note2':
+                    puzzle = Library_puzzle()
+                    puzzle.puzzle2(None)
+                elif action == 'watch':
+                    puzzle = Bedroom_Puzzle()
+                    puzzle.puzzle1()
+                elif action == 'picture':
+                    puzzle = Bedroom_Puzzle()
+                    puzzle.puzzle2()
+                elif action == 'phone':
+                    puzzle = Kitchen_Puzzle()
+                    puzzle.puzzle1()
+                elif action == 'locket':
+                    puzzle = Kitchen_Puzzle()
+                    puzzle.puzzle2()
+
         else:
             self.screen.blit(load_button_inactive, (x, y))
+
 
 
 class DrivingScene(Scene):
@@ -62,6 +117,12 @@ class DrivingScene(Scene):
             self.create_button("instruction", 50, 50, action[2])
             self.create_button("quit", 1000, 40, action[1])
 
+    def next_scene(self, check_user_input):
+        if check_user_input:
+            self.scene_on = True
+        else:
+            print("Wrong!")
+
 
 class Foyer(Scene):
     def __init__(self, screen, text_box):
@@ -72,11 +133,10 @@ class Foyer(Scene):
     def enter(self):
         self.screen.blit(self.bg, (0, 0))
         self.screen.blit(self.text_box, (240, 580))
-        self.create_button('instruction', 40, 50, action[2])
-        self.create_button('woman', 300, 390, action[0])
-        self.create_button('man', 150, 425, action[0])
-        self.create_button('teen', 700, 385, action[0])
-
+        # self.create_button('instruction', 40, 50, action[2])
+        self.create_button('woman', 300, 390, action[3])
+        self.create_button('man', 150, 425, action[4])
+        self.create_button('teen', 700, 385, action[5])
 
 class Library(Scene):
     def __init__(self, screen, text_box):
@@ -87,23 +147,91 @@ class Library(Scene):
     def enter(self):
         self.screen.blit(self.bg, (0, 0))
         self.screen.blit(self.text_box, (240, 580))
-        self.create_button('instruction', 40, 50, action[2])
+        # self.create_button('instruction', 40, 50, action[2])
         woman_img = pygame.image.load('./images/beautiful_woman.png')
         self.screen.blit(woman_img, (60, 350))
+        self.create_button('note1', 275, 550, action[7])
+        self.create_button('note2', 695, 500, action[7])
         # self.create_button()
 
+    def first_puzzle(self, user_input):
+        current_puzzle = Library_puzzle()
+        puzzle_solved = current_puzzle.puzzle1(user_input)
+        if puzzle_solved:
+            player_list.append(master_list[0])
 
-class MasterBedroom(Scene):
+    def second_puzzle(self, user_input):
+        current_puzzle = Library_puzzle()
+        puzzle_solved = current_puzzle.puzzle2(user_input)
+        if puzzle_solved:
+            player_list.append(master_list[1])
+
+
+
+class Bedroom(Scene):
     def __init__(self, screen, text_box):
-        super(MasterBedroom, self).__init__(screen)
+        super(Bedroom, self).__init__(screen)
         self.bg = pygame.image.load('./images/bedroom.jpg')
         self.text_box = text_box
 
     def enter(self):
         self.screen.blit(self.bg, (0, 0))
         self.screen.blit(self.text_box, (240, 580))
-        self.create_button('instruction', 40, 50, action[2])
+        # self.create_button('instruction', 40, 50, action[2])
+        self.create_button('watch', 425, 560, action [7])
+        self.create_button('skyline', 643, 300, action[1])
+        man_img = pygame.image.load('./images/elderly_man.png')
+        self.screen.blit(man_img, (45, 335))
 
+    def first_puzzle(self, user_input):
+        current_puzzle = Bedroom_Puzzle()
+        puzzle_solved = current_puzzle.puzzle1()
+        if puzzle_solved:
+            player_list.append(master_list[2])
+
+    def second_puzzle(self, user_input):
+        current_puzzle = Bedroom_Puzzle()
+        puzzle_solved = current_puzzle.puzzle2()
+        if puzzle_solved:
+            player_list.append(master_list[3])
+
+
+class Kitchen(Scene):
+    def __init__(self, screen, text_box):
+        super(Kitchen, self).__init__(screen)
+        self.bg = pygame.image.load('./images/kitchen.jpg')
+        self.text_box = text_box
+
+    def enter(self):
+        self.screen.blit(self.bg, (0, 0))
+        self.screen.blit(self.text_box, (240, 580))
+        # self.create_button('instruction', 40, 50, action[2])
+        self.create_button('phone', 100, 435, action[1])
+        self.create_button('locket', 950, 430, action[1])
+        teen_img = pygame.image.load('./images/goth_teen3.png')
+        self.screen.blit(teen_img, (600, 220))
+
+    def first_puzzle(self, user_input):
+        current_puzzle = Bedroom_Puzzle()
+        puzzle_solved = current_puzzle.puzzle1()
+        if puzzle_solved:
+            player_list.append(master_list[4])
+
+    def second_puzzle(self, user_input):
+        current_puzzle = Bedroom_Puzzle()
+        puzzle_solved = current_puzzle.puzzle2()
+        if puzzle_solved:
+            player_list.append(master_list[5])
+
+class Final(Scene):
+    def __init__(self, screen, text_box):
+        super(Final, self).__init__(screen)
+        self.bg = pygame.image.load('./images/final.jpg')
+        self.text_box = text_box
+
+    def enter(self):
+        self.screen.blit(self.bg, (0, 0))
+        self.screen.blit(self.text_box, (340, 100))
 
 
     # def next_scene(self, screen, input):
