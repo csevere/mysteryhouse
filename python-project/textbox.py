@@ -1,11 +1,10 @@
 import pygame as pg
 import string
-import textbox_script
+
 
 class TextBox(object):
     '''
     Example can found in run_textbox.py.py
-
     '''
     def __init__(self,rect,**kwargs):
         '''
@@ -30,7 +29,6 @@ class TextBox(object):
                 prompt blink time in milliseconds
             "delete_speed": 500
                 backspace held clear speed in milliseconds
-
         Values:
             self.rect = pg.Rect(rect)
             self.buffer = []
@@ -45,6 +43,8 @@ class TextBox(object):
         '''
         self.rect = pg.Rect(rect)
         self.buffer = []
+        self.input = None
+        self.text = None
         self.final = None
         self.rendered = None
         self.render_rect = None
@@ -65,11 +65,12 @@ class TextBox(object):
                     "outline_width" : 2,
                     "active_color" : pg.Color(166, 166, 166, 100),
                     "font" : pg.font.Font(None, self.rect.height+4),
-                    "clear_on_enter" : False,
+                    "clear_on_enter" : True,
                     "inactive_on_enter" : True,
                     "blink_speed": 500,
                     "delete_speed": 75,
-                    }
+                    "input": None,
+                    "text": None}
         for kwarg in kwargs:
             if kwarg in defaults:
                 defaults[kwarg] = kwargs[kwarg]
@@ -79,13 +80,13 @@ class TextBox(object):
 
     def get_event(self,event, mouse_pos=None):
         ''' Call this on your event loop
-
             for event in pg.event.get():
                 TextBox.get_event(event)
         '''
         if event.type == pg.KEYDOWN and self.active:
             if event.key in (pg.K_RETURN,pg.K_KP_ENTER):
                 self.execute()
+                self.input = self.final
             elif event.key == pg.K_BACKSPACE:
                 if self.buffer:
                     self.buffer.pop()
@@ -134,6 +135,26 @@ class TextBox(object):
             if keys[pg.K_BACKSPACE]:
                 if self.buffer:
                     self.buffer.pop()
+
+    def text_display(self, surface):
+        text_font = pg.font.Font("freesansbold.ttf", 20)
+        text_dis = text_font.render(self.text, True, self.color)
+        surface.blit(text_dis, [150, 570])
+
+    def get_user_input(self):
+        return self.input
+
+        # need add text display to tell user their invalid input
+    def check_user_input(self, answer):
+            # use for loop and if statement to decide if user has enter the right input
+            user_input = self.get_user_input()
+            # for option in option_list:
+            if user_input == answer:
+                return True
+            else:
+
+                print("Wrong")
+
 
     def draw(self,surface):
         '''
